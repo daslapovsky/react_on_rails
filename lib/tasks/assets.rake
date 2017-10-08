@@ -48,7 +48,7 @@ end
 # Sprockets independent tasks
 namespace :react_on_rails do
   namespace :assets do
-    desc <<-DESC.strip_heredoc
+    desc <<-DESC.strip_heredoc_first_line
       Compile assets with webpack
       Uses command defined with ReactOnRails.configuration.build_production_command
 

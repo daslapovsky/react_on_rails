@@ -12,6 +12,8 @@ module ReactOnRails
           ReactOnRails.configuration.build_test_command
         )
 
+        puts "MeekBug: #{cmd} will be called from #{Dir.pwd}"
+
         ReactOnRails::Utils.invoke_and_exit_if_failed(cmd, "Error in building webpack assets!")
 
         puts "Completed building Webpack assets."

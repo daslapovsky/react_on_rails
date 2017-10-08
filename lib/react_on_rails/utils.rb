@@ -22,13 +22,11 @@ module ReactOnRails
     # Pass in the msg and color as a symbol.
     def self.wrap_message(msg, color = :red)
       wrapper_line = ("=" * 80).to_s
-      # rubocop:disable Layout/IndentHeredoc
-      fenced_msg = <<-MSG
-#{wrapper_line}
-#{msg.strip}
-#{wrapper_line}
+      fenced_msg = <<-MSG.strip_heredoc_first_line
+        #{wrapper_line}
+        #{msg.strip}
+        #{wrapper_line}
       MSG
-      # rubocop:enable Layout/IndentHeredoc
       Rainbow(fenced_msg).color(color)
     end
 
@@ -46,12 +44,11 @@ module ReactOnRails
       unless status.success?
         stdout_msg = stdout.present? ? "\nstdout:\n#{stdout.strip}\n" : ""
         stderr_msg = stderr.present? ? "\nstderr:\n#{stderr.strip}\n" : ""
-        # rubocop:disable Layout/IndentHeredoc
-        msg = <<-MSG
-React on Rails FATAL ERROR!
-#{failure_message}
-cmd: #{cmd}
-exitstatus: #{status.exitstatus}#{stdout_msg}#{stderr_msg}
+        msg = <<-MSG.strip_heredoc_first_line
+          React on Rails FATAL ERROR!
+          #{failure_message}
+          cmd: #{cmd}
+          exitstatus: #{status.exitstatus}#{stdout_msg}#{stderr_msg}
         MSG
         # rubocop:enable Layout/IndentHeredoc
         puts wrap_message(msg)
@@ -143,11 +140,11 @@ exitstatus: #{status.exitstatus}#{stdout_msg}#{stderr_msg}
 
     def self.bundle_js_file_path_from_webpacker(bundle_name)
       hashed_bundle_name = Webpacker.manifest.lookup(bundle_name)
+      Webpacker.manifest.lookup!(bundle_name) if hashed_bundle_name.nil?
       if Webpacker.dev_server.running?
         result = "#{Webpacker.dev_server.protocol}://#{Webpacker.dev_server.host_with_port}#{hashed_bundle_name}"
         result
       else
-        # Next line will throw if the file or manifest does not exist
         Rails.root.join(File.join("public", hashed_bundle_name)).to_s
       end
     end
@@ -166,7 +163,7 @@ exitstatus: #{status.exitstatus}#{stdout_msg}#{stderr_msg}
 
     def self.check_manifest_not_cached
       return unless using_webpacker? && Webpacker.config.cache_manifest?
-      msg = <<-MSG.strip_heredoc
+      msg = <<-MSG.strip_heredoc_first_line
           ERROR: you have enabled cache_manifest in the #{Rails.env} env when using the
           ReactOnRails::TestHelper.configure_rspec_to_compile_assets helper
           To fix this: edit your config/webpacker.yml file and set cache_manifest to false for test.
